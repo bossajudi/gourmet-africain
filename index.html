@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Baobab Royal | Restaurant Africain Gastronomique</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --gold: #e8a838;
+            --gold-light: #f0c878;
+            --gold-dark: #c07818;
+            --black: #0a0a0a;
+            --dark: #1a1a1a;
+            --gray: #2a2a2a;
+            --white: #ffffff;
+            --text: #e0d5c8;
+            --text-dark: #8a8078;
+            --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+            --font-body: 'Lato', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --shadow: 0 20px 60px rgba(0,0,0,0.3);
+            --shadow-gold: 0 10px 40px rgba(232, 168, 56, 0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body {
+            font-family: var(--font-body);
+            background: var(--black);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        .preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); display: flex; align-items: center; justify-content: center; z-index: 10000; transition: opacity 0.8s ease, visibility 0.8s ease; }
+        .preloader.hidden { opacity: 0; visibility: hidden; }
+        .preloader-content { text-align: center; }
+        .preloader .fork-knife { font-size: 4rem; animation: float 2s ease-in-out infinite; }
+        .preloader .loading-bar { width: 200px; height: 3px; background: var(--gray); border-radius: 5px; margin: 1.5rem auto; overflow: hidden; }
+        .preloader .loading-bar::after { content: ''; display: block; width: 50%; height: 100%; background: var(--gold); animation: shimmer 1.5s infinite; border-radius: 5px; }
+        .preloader p { color: var(--gold-light); letter-spacing: 4px; font-size: 0.8rem; text-transform: uppercase; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 1.5rem 2rem; transition: var(--transition); display: flex; justify-content: space-between; align-items: center; }
+        .navbar.scrolled { background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); padding: 1rem 2rem; box-shadow: 0 5px 30px rgba(0,0,0,0.5); border-bottom: 1px solid rgba(232,168,56,0.2); }
+        .logo { font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold); text-decoration: none; letter-spacing: 2px; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+        .logo i { font-size: 1.4rem; animation: float 3s ease-in-out infinite; }
+        .logo:hover { color: var(--white); text-shadow: 0 0 30px rgba(232,168,56,0.5); }
+        .nav-links { display: flex; list-style: none; gap: 2.5rem; align-items: center; }
+        .nav-links a { color: var(--text); text-decoration: none; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; transition: var(--transition); position: relative; padding: 0.3rem 0; }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%) scaleX(0); width: 100%; height: 2px; background: var(--gold); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); border-radius: 1px; }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a:hover::after { transform: translateX(-50%) scaleX(1); }
+        .btn-reservation { background: var(--gold); color: var(--black) !important; padding: 0.8rem 2rem !important; border-radius: 50px; font-weight: 700 !important; letter-spacing: 1px !important; border: 2px solid transparent; }
+        .btn-reservation::after { display: none !important; }
+        .btn-reservation:hover { background: transparent !important; color: var(--gold) !important; border-color: var(--gold); box-shadow: var(--shadow-gold); transform: translateY(-3px); }
+        .hamburger { display: none; cursor: pointer; background: none; border: none; color: var(--gold); font-size: 1.8rem; z-index: 1001; }
+        .hamburger:hover { color: var(--white); }
+        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: radial-gradient(ellipse at center, var(--gray) 0%, var(--black) 70%); }
+        .hero-particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
+        .particle { position: absolute; width: 3px; height: 3px; background: var(--gold); border-radius: 50%; animation: float 6s ease-in-out infinite; opacity: 0.6; }
+        .hero-content { text-align: center; position: relative; z-index: 10; padding: 2rem; }
+        .hero-subtitle { font-size: 0.9rem; letter-spacing: 6px; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+        .hero-title { font-family: var(--font-heading); font-size: clamp(3rem, 8vw, 7rem); font-weight: 700; color: var(--white); line-height: 1.1; margin-bottom: 1rem; }
+        .hero-title span { color: var(--gold); display: block; font-style: italic; }
+        .hero-description { font-size: 1.2rem; color: var(--text-dark); max-width: 600px; margin: 0 auto 2.5rem; }
+        .btn-group { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+        .btn-primary, .btn-secondary { padding: 1rem 2.5rem; border-radius: 50px; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: var(--transition); text-decoration: none; font-weight: 600; }
+        .btn-primary { background: var(--gold); color: var(--black); border: 2px solid var(--gold); }
+        .btn-primary:hover { background: transparent; color: var(--gold); box-shadow: var(--shadow-gold); transform: translateY(-4px); }
+        .btn-secondary { background: transparent; color: var(--white); border: 2px solid rgba(255,255,255,0.3); }
+        .btn-secondary:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-4px); }
+        .scroll-indicator { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); animation: float 2s ease-in-out infinite; cursor: pointer; z-index: 10; }
+        .scroll-indicator .mouse { width: 28px; height: 45px; border: 2px solid var(--gold); border-radius: 14px; position: relative; margin: 0 auto 0.5rem; }
+        .scroll-indicator .mouse::after { content: ''; width: 4px; height: 8px; background: var(--gold); border-radius: 2px; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); animation: scrollWheel 2s ease-in-out infinite; }
+        @keyframes scrollWheel { 0%, 100% { opacity: 1; top: 8px; } 50% { opacity: 0.3; top: 20px; } }
+        .scroll-indicator span { display: block; color: var(--gold); font-size: 0.7rem; letter-spacing: 2px; }
+        .section { padding: 8rem 2rem; position: relative; }
+        .section-dark { background: var(--dark); }
+        .section-black { background: var(--black); }
+        .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
+        .section-header { text-align: center; margin-bottom: 5rem; }
+        .section-subtitle { font-size: 0.8rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+        .section-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--white); margin-bottom: 1rem; line-height: 1.2; }
+        .section-title span { color: var(--gold); }
+        .divider { width: 80px; height: 3px; background: var(--gold); margin: 1.5rem auto; border-radius: 2px; position: relative; }
+        .divider::before { content: '✦'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--dark); padding: 0 15px; color: var(--gold); font-size: 0.8rem; }
+        .section-black .divider::before { background: var(--black); }
+        .section-description { color: var(--text-dark); max-width: 600px; margin: 0 auto; font-size: 1.1rem; }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+        .about-image-wrapper { position: relative; }
+        .about-image { width: 100%; height: 550px; object-fit: cover; border-radius: 2px; box-shadow: var(--shadow); }
+        .about-image-wrapper::before { content: ''; position: absolute; top: -20px; left: -20px; width: 100%; height: 100%; border: 2px solid var(--gold); border-radius: 2px; z-index: -1; }
+        .experience-badge { position: absolute; bottom: -30px; right: -30px; background: var(--gold); color: var(--black); padding: 2rem; text-align: center; border-radius: 2px; box-shadow: var(--shadow-gold); }
+        .experience-badge .number { font-family: var(--font-heading); font-size: 3rem; font-weight: 700; display: block; line-height: 1; }
+        .experience-badge .text { font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+        .about-content h3 { font-family: var(--font-heading); font-size: 2rem; color: var(--white); margin-bottom: 1.5rem; }
+        .about-content p { color: var(--text-dark); margin-bottom: 2rem; }
+        .features-list { list-style: none; display: grid; gap: 1rem; }
+        .features-list li { display: flex; align-items: center; gap: 1rem; color: var(--text); }
+        .features-list i { color: var(--gold); font-size: 1.2rem; }
+        .menu-filter { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
+        .filter-btn { padding: 0.8rem 2rem; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); border-radius: 50px; cursor: pointer; transition: var(--transition); font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; }
+        .filter-btn:hover, .filter-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); box-shadow: var(--shadow-gold); }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .menu-item { background: var(--gray); border-radius: 2px; overflow: hidden; transition: var(--transition); border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .menu-item:hover { transform: translateY(-10px); box-shadow: var(--shadow); border-color: var(--gold); }
+        .menu-item-image { width: 100%; height: 220px; object-fit: cover; transition: var(--transition); }
+        .menu-item:hover .menu-item-image { transform: scale(1.1); }
+        .menu-item-body { padding: 1.5rem; }
+        .menu-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .menu-item h4 { font-family: var(--font-heading); font-size: 1.3rem; color: var(--white); }
+        .menu-item .price { color: var(--gold); font-weight: 700; font-size: 1.2rem; }
+        .menu-item .description { color: var(--text-dark); font-size: 0.9rem; margin-bottom: 1rem; }
+        .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .tag { padding: 0.3rem 0.8rem; background: rgba(232,168,56,0.1); color: var(--gold); border-radius: 50px; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .gallery-item { position: relative; overflow: hidden; border-radius: 2px; cursor: pointer; height: 350px; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
+        .gallery-item:hover img { transform: scale(1.15); }
+        .gallery-item .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: var(--transition); }
+        .gallery-item:hover .overlay { opacity: 1; }
+        .overlay i { color: var(--gold); font-size: 2.5rem; animation: float 1.5s ease-in-out infinite; }
+        .testimonials-slider { max-width: 800px; margin: 0 auto; position: relative; overflow: hidden; }
+        .testimonial-card { background: var(--gray); padding: 3rem; border-radius: 2px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .testimonial-card .stars { color: var(--gold); font-size: 1.2rem; margin-bottom: 1.5rem; }
+        .testimonial-card .quote { font-size: 1.2rem; color: var(--text); font-style: italic; margin-bottom: 1.5rem; line-height: 1.8; }
+        .testimonial-card .author { color: var(--gold); font-weight: 600; }
+        .slider-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--text-dark); cursor: pointer; transition: var(--transition); }
+        .dot.active { background: var(--gold); transform: scale(1.5); }
+        .reservation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .reservation-form { background: var(--gray); padding: 3rem; border-radius: 2px; border: 1px solid rgba(255,255,255,0.05); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; color: var(--gold); margin-bottom: 0.5rem; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 1rem; background: var(--dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; color: var(--white); font-family: var(--font-body); font-size: 1rem; transition: var(--transition); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(232,168,56,0.1); }
+        .btn-submit { width: 100%; padding: 1.2rem; background: var(--gold); color: var(--black); border: 2px solid var(--gold); border-radius: 50px; font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; font-weight: 700; transition: var(--transition); }
+        .btn-submit:hover { background: transparent; color: var(--gold); box-shadow: var(--shadow-gold); }
+        .reservation-info { display: grid; gap: 2rem; }
+        .info-card { background: var(--gray); padding: 2rem; border-radius: 2px; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition); }
+        .info-card:hover { border-color: var(--gold); transform: translateY(-5px); }
+        .info-card i { font-size: 2.5rem; color: var(--gold); margin-bottom: 1rem; }
+        .info-card h4 { color: var(--white); margin-bottom: 0.5rem; font-family: var(--font-heading); }
+        .info-card p { color: var(--text-dark); }
+        .footer { background: var(--dark); padding: 5rem 2rem 2rem; border-top: 1px solid rgba(232,168,56,0.2); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+        .footer-col h4 { font-family: var(--font-heading); color: var(--white); margin-bottom: 1.5rem; font-size: 1.3rem; }
+        .footer-col p { color: var(--text-dark); margin-bottom: 1rem; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 0.8rem; }
+        .footer-col ul li a { color: var(--text-dark); text-decoration: none; transition: var(--transition); }
+        .footer-col ul li a:hover { color: var(--gold); padding-left: 5px; }
+        .social-links { display: flex; gap: 1rem; }
+        .social-links a { width: 45px; height: 45px; border-radius: 50%; background: var(--gray); display: flex; align-items: center; justify-content: center; color: var(--text); text-decoration: none; transition: var(--transition); font-size: 1.2rem; }
+        .social-links a:hover { background: var(--gold); color: var(--black); transform: translateY(-5px); }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-dark); font-size: 0.9rem; }
+        .back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 50px; height: 50px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--black); cursor: pointer; opacity: 0; visibility: hidden; transition: var(--transition); z-index: 999; border: none; font-size: 1.2rem; }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { background: var(--white); transform: translateY(-5px); }
+        .reveal, .reveal-left, .reveal-right, .reveal-up, .reveal-scale { opacity: 0; transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .reveal-left { transform: translateX(-80px); }
+        .reveal-right { transform: translateX(80px); }
+        .reveal-up { transform: translateY(80px); }
+        .reveal-scale { transform: scale(0.7); }
+        .visible { opacity: 1 !important; transform: translateX(0) translateY(0) scale(1) !important; }
+        @media (max-width: 1024px) { .about-grid, .reservation-grid { grid-template-columns: 1fr; gap: 3rem; } .footer-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) {
+            .nav-links { position: fixed; top: 0; right: -100%; width: 80%; max-width: 350px; height: 100vh; background: rgba(10,10,10,0.98); backdrop-filter: blur(20px); flex-direction: column; justify-content: center; gap: 2rem; transition: var(--transition); border-left: 1px solid rgba(232,168,56,0.2); }
+            .nav-links.active { right: 0; }
+            .hamburger { display: block; }
+            .section { padding: 5rem 1.5rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .btn-group { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <div class="fork-knife">🥘</div>
+            <div class="loading-bar"></div>
+            <p>Le Baobab Royal</p>
+        </div>
+    </div>
+
+    <nav class="navbar" id="navbar">
+        <a href="#home" class="logo"><i class="fas fa-tree"></i> Le Baobab</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home" onclick="closeMenu()">Accueil</a></li>
+            <li><a href="#about" onclick="closeMenu()">À propos</a></li>
+            <li><a href="#menu" onclick="closeMenu()">Menu</a></li>
+            <li><a href="#gallery" onclick="closeMenu()">Galerie</a></li>
+            <li><a href="#reservation" onclick="closeMenu()" class="btn-reservation">Réserver</a></li>
+        </ul>
+        <button class="hamburger" id="hamburger" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-content">
+            <p class="hero-subtitle">Restaurant Africain Gastronomique</p>
+            <h1 class="hero-title">Le Baobab<br><span>Royal</span></h1>
+            <p class="hero-description">Un voyage culinaire au cœur de l'Afrique. Découvrez des saveurs authentiques sublimées par notre chef, entre traditions ancestrales et créativité moderne.</p>
+            <div class="btn-group">
+                <a href="#menu" class="btn-primary">Notre Menu</a>
+                <a href="#reservation" class="btn-secondary">Réserver une table</a>
+            </div>
+        </div>
+        <div class="scroll-indicator"><div class="mouse"></div><span>SCROLL</span></div>
+    </section>
+
+    <section class="section section-dark" id="about">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Notre Histoire</p>
+                <h2 class="section-title">L'Âme de <span>l'Afrique</span></h2>
+                <div class="divider"></div>
+                <p class="section-description">Depuis 2010, notre chef vous fait voyager à travers les saveurs du continent africain, du Maghreb à l'Afrique subsaharienne.</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-image-wrapper reveal-left">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800" alt="Restaurant africain" class="about-image">
+                    <div class="experience-badge"><span class="number">14</span><span class="text">Ans d'excellence</span></div>
+                </div>
+                <div class="about-content reveal-right">
+                    <h3>La passion des saveurs africaines</h3>
+                    <p>Notre chef, originaire du Sénégal et formé dans les plus grandes cuisines du continent, réinvente les classiques africains avec une touche contemporaine. Chaque plat raconte une histoire, celle d'un terroir riche et généreux.</p>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check-circle"></i> Épices importées directement d'Afrique</li>
+                        <li><i class="fas fa-check-circle"></i> Carte inspirée des 54 pays du continent</li>
+                        <li><i class="fas fa-check-circle"></i> Accords mets & vins africains</li>
+                        <li><i class="fas fa-check-circle"></i> Chef primé au guide gastronomique</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-black" id="menu">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Carte</p>
+                <h2 class="section-title">Notre <span>Menu</span></h2>
+                <div class="divider"></div>
+                <p class="section-description">Des créations qui célèbrent la richesse et la diversité de la gastronomie africaine.</p>
+            </div>
+            <div class="menu-filter">
+                <button class="filter-btn active" onclick="filterMenu('all')">Tout</button>
+                <button class="filter-btn" onclick="filterMenu('starter')">Entrées</button>
+                <button class="filter-btn" onclick="filterMenu('main')">Plats</button>
+                <button class="filter-btn" onclick="filterMenu('dessert')">Desserts</button>
+            </div>
+            <div class="menu-grid" id="menuGrid">
+                <div class="menu-item" data-category="starter"><img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600" alt="Fataya" class="menu-item-image"><div class="menu-item-body"><div class="menu-item-header"><h4>Fataya au Poulet</h4><span class="price">14€</span></div><p class="description">Beignets sénégalais farcis au poulet épicé, sauce tomate pimentée.</p><div class="tags"><span class="tag">Sénégal</span><span class="tag">Épicé</span></div></div></div>
+                <div class="menu-item" data-category="starter"><img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600" alt="Brik" class="menu-item-image"><div class="menu-item-body"><div class="menu-item-header"><h4>Brik à l'Œuf</h4><span class="price">12€</span></div><p class="description">Feuille de brick croustillante, œuf coulant, thon, câpres, harissa.</p><div class="tags"><span class="tag">Tunisie</span><span class="tag">Signature</span></div></div></div>
+                <div class="menu-item" data-category="main"><img src="https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600" alt="Thieboudienne" class="menu-item-image"><div class="menu-item-body"><div class="menu-item-header"><h4>Thiéboudienne Royal</h4><span class="price">36€</span></div><p class="description">Riz brisé au poisson, légumes du soleil, sauce tomate épicée, citron confit.</p><div class="tags"><span class="tag">Sénégal</span><span class="tag">Plat Signature</span></div></div></div>
+                <div class="menu-item" data-category="main"><img src="https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600" alt="Tajine" class="menu-item-image"><div class="menu-item-body"><div class="menu-item-header"><h4>Tajine d'Agneau</h4><span class="price">34€</span></div><p class="description">Agneau confit, pruneaux, amandes, miel de montagne, épices douces.</p><div class="tags"><span class="tag">Maroc</span><span class="tag">Sans Gluten</span></div></div></div>
+                <div class="menu-item" data-category="dessert"><img src="https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=600" alt="Thiakry" class="menu-item-image"><div class="menu-item-body"><div class="menu-item-header"><h4>Thiakry Coco-Mangue</h4><span class="price">12€</span></div><p class="description">Semoule de mil, yaourt onctueux, mangue fraîche, noix de coco râpée.</p><div class="tags"><span class="tag">Sénégal</span><span class="tag">Végétarien</span></div></div></div>
+                <div class="menu-item" data-category="dessert"><img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=600" alt="Cornes de Gazelle" class="menu-item-image"><div class="menu-item-body"><div class="menu-item-header"><h4>Cornes de Gazelle</h4><span class="price">10€</span></div><p class="description">Pâtisserie marocaine aux amandes, fleur d'oranger, miel, sucre glace.</p><div class="tags"><span class="tag">Maroc</span><span class="tag">Classique</span></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-dark" id="gallery">
+        <div class="container">
+            <div class="section-header"><p class="section-subtitle">Galerie</p><h2 class="section-title">L'Ambiance <span>Africaine</span></h2><div class="divider"></div><p class="section-description">Un cadre chaleureux aux couleurs de l'Afrique pour sublimer votre expérience.</p></div>
+            <div class="gallery-grid">
+                <div class="gallery-item reveal-scale"><img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600" alt="Salle"><div class="overlay"><i class="fas fa-search-plus"></i></div></div>
+                <div class="gallery-item reveal-scale"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e4c0?w=600" alt="Table"><div class="overlay"><i class="fas fa-search-plus"></i></div></div>
+                <div class="gallery-item reveal-scale"><img src="https://images.unsplash.com/photo-1550966871-3ed3cdb51f3a?w=600" alt="Bar"><div class="overlay"><i class="fas fa-search-plus"></i></div></div>
+                <div class="gallery-item reveal-scale"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600" alt="Cuisine"><div class="overlay"><i class="fas fa-search-plus"></i></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-black" id="testimonials">
+        <div class="container">
+            <div class="section-header"><p class="section-subtitle">Avis</p><h2 class="section-title">Ce qu'ils en <span>Pensent</span></h2><div class="divider"></div></div>
+            <div class="testimonials-slider" id="testimonialSlider"><div class="testimonial-card"><div class="stars">⭐⭐⭐⭐⭐</div><p class="quote">"Un voyage culinaire extraordinaire ! Le thiéboudienne est le meilleur que j'ai goûté hors du Sénégal. L'ambiance est magnifique, on se croirait à Dakar."</p><p class="author">— Aminata & Jean-Marc K.</p></div></div>
+            <div class="slider-dots" id="sliderDots"><span class="dot active" onclick="goToSlide(0)"></span><span class="dot" onclick="goToSlide(1)"></span><span class="dot" onclick="goToSlide(2)"></span></div>
+        </div>
+    </section>
+
+    <section class="section section-dark" id="reservation">
+        <div class="container">
+            <div class="section-header"><p class="section-subtitle">Réservation</p><h2 class="section-title">Réservez votre <span>Table</span></h2><div class="divider"></div><p class="section-description">Réservez en ligne et embarquez pour un voyage gustatif africain inoubliable.</p></div>
+            <div class="reservation-grid">
+                <form class="reservation-form reveal-left" id="reservationForm">
+                    <div class="form-row"><div class="form-group"><label>Nom</label><input type="text" placeholder="Votre nom" required></div><div class="form-group"><label>Prénom</label><input type="text" placeholder="Votre prénom" required></div></div>
+                    <div class="form-row"><div class="form-group"><label>Email</label><input type="email" placeholder="email@exemple.com" required></div><div class="form-group"><label>Téléphone</label><input type="tel" placeholder="06 12 34 56 78" required></div></div>
+                    <div class="form-row"><div class="form-group"><label>Date</label><input type="date" required></div><div class="form-group"><label>Heure</label><select required><option value="">Choisir</option><option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option></select></div></div>
+                    <div class="form-group"><label>Nombre de convives</label><select required><option value="">Choisir</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6+</option></select></div>
+                    <div class="form-group"><label>Message (optionnel)</label><textarea rows="3" placeholder="Allergies, occasion spéciale..."></textarea></div>
+                    <button type="submit" class="btn-submit">Réserver maintenant</button>
+                </form>
+                <div class="reservation-info reveal-right">
+                    <div class="info-card"><i class="fas fa-clock"></i><h4>Horaires</h4><p>Mardi - Samedi : 19h - 23h</p><p>Dimanche : 12h - 16h</p></div>
+                    <div class="info-card"><i class="fas fa-map-marker-alt"></i><h4>Adresse</h4><p>25 Rue des Épices</p><p>75010 Paris, France</p></div>
+                    <div class="info-card"><i class="fas fa-phone"></i><h4>Contact</h4><p>+33 1 98 76 54 32</p><p>contact@lebaobabroyal.fr</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col"><h4>Le Baobab Royal</h4><p>Restaurant africain gastronomique au cœur de Paris. Un voyage culinaire à travers tout le continent.</p><div class="social-links"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-tripadvisor"></i></a><a href="#"><i class="fab fa-google"></i></a></div></div>
+                <div class="footer-col"><h4>Navigation</h4><ul><li><a href="#home">Accueil</a></li><li><a href="#about">À propos</a></li><li><a href="#menu">Menu</a></li><li><a href="#gallery">Galerie</a></li><li><a href="#reservation">Réservation</a></li></ul></div>
+                <div class="footer-col"><h4>Horaires</h4><ul><li>Lundi : Fermé</li><li>Mar-Sam : 19h - 23h</li><li>Dimanche : 12h - 16h</li></ul></div>
+                <div class="footer-col"><h4>Newsletter</h4><p>Recevez nos actualités et offres.</p><form id="newsletterFooterForm" style="display:flex;gap:0.5rem;"><input type="email" placeholder="Votre email" style="padding:0.8rem;border:1px solid rgba(255,255,255,0.1);background:var(--black);color:var(--white);border-radius:50px;flex:1;"><button type="submit" style="background:var(--gold);color:var(--black);border:none;padding:0.8rem 1.2rem;border-radius:50px;cursor:pointer;"><i class="fas fa-paper-plane"></i></button></form></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 Le Baobab Royal. Tous droits réservés. | Fait avec ❤️</p></div>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()"><i class="fas fa-chevron-up"></i></button>
+
+    <script>
+        window.addEventListener('load', function() { setTimeout(function() { document.getElementById('preloader').classList.add('hidden'); }, 1500); });
+        window.addEventListener('scroll', function() { const n = document.getElementById('navbar'), b = document.getElementById('backToTop'); if (window.scrollY > 50) { n.classList.add('scrolled'); b.classList.add('visible'); } else { n.classList.remove('scrolled'); b.classList.remove('visible'); } });
+        function toggleMenu() { const n = document.getElementById('navLinks'), h = document.getElementById('hamburger'); n.classList.toggle('active'); h.innerHTML = n.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>'; }
+        function closeMenu() { document.getElementById('navLinks').classList.remove('active'); document.getElementById('hamburger').innerHTML = '<i class="fas fa-bars"></i>'; }
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        (function() { const c = document.getElementById('particles'); for (let i = 0; i < 30; i++) { const p = document.createElement('div'); p.classList.add('particle'); p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%'; p.style.animationDelay = Math.random() * 6 + 's'; p.style.animationDuration = (Math.random() * 4 + 4) + 's'; c.appendChild(p); } })();
+        function filterMenu(cat) { document.querySelectorAll('.menu-item').forEach(el => { el.style.display = (cat === 'all' || el.dataset.category === cat) ? 'block' : 'none'; }); document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); event.target.classList.add('active'); }
+        const testimonials = [ { stars: '⭐⭐⭐⭐⭐', quote: '"Un voyage culinaire extraordinaire ! Le thiéboudienne est le meilleur que j\'ai goûté hors du Sénégal."', author: '— Aminata & Jean-Marc K.' }, { stars: '⭐⭐⭐⭐⭐', quote: '"Le tajine d\'agneau est une merveille. Les épices sont parfaitement dosées. Bravo au chef !"', author: '— Fatima Z.' }, { stars: '⭐⭐⭐⭐⭐', quote: '"J\'ai organisé mon anniversaire ici et tout était parfait. Je recommande les yeux fermés !"', author: '— Koffi A.' } ];
+        let cs = 0;
+        function goToSlide(i) { cs = i; const s = document.getElementById('testimonialSlider'), d = document.querySelectorAll('.dot'); s.innerHTML = '<div class="testimonial-card"><div class="stars">'+testimonials[i].stars+'</div><p class="quote">'+testimonials[i].quote+'</p><p class="author">'+testimonials[i].author+'</p></div>'; d.forEach((dot, j) => { dot.classList.toggle('active', j === i); }); }
+        setInterval(() => { cs = (cs + 1) % testimonials.length; goToSlide(cs); }, 5000);
+        function revealOnScroll() { document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-up, .reveal-scale').forEach(el => { if (el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add('visible'); }); }
+        window.addEventListener('scroll', revealOnScroll); revealOnScroll();
+        document.getElementById('reservationForm').addEventListener('submit', function(e) { e.preventDefault(); alert('✅ Réservation envoyée avec succès !'); this.reset(); });
+        document.getElementById('newsletterFooterForm').addEventListener('submit', function(e) { e.preventDefault(); alert('✅ Merci de votre inscription !'); this.reset(); });
+    </script>
+</body>
+</html>
